@@ -1,6 +1,6 @@
-package com.amazontest;
+package com.watchbaseballlive;
 
-import com.amazontest.service.KboCrawlingService;
+import com.watchbaseballlive.service.KboCrawlingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

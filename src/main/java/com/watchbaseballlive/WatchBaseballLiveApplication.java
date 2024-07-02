@@ -1,4 +1,4 @@
-package com.amazontest;
+package com.watchbaseballlive;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

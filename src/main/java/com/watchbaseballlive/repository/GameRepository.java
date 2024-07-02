@@ -1,6 +1,6 @@
-package com.amazontest.repository;
+package com.watchbaseballlive.repository;
 
-import com.amazontest.domain.GameEntity;
+import com.watchbaseballlive.domain.GameEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

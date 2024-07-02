@@ -1,4 +1,4 @@
-package com.amazontest.type;
+package com.watchbaseballlive.type;
 
 public enum TeamName {
     LOTTE("롯데", "Lotte Giants"),

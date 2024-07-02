@@ -1,7 +1,7 @@
-package com.amazontest.service;
+package com.watchbaseballlive.service;
 
-import com.amazontest.domain.GameEntity;
-import com.amazontest.repository.GameRepository;
+import com.watchbaseballlive.domain.GameEntity;
+import com.watchbaseballlive.repository.GameRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;

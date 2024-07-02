@@ -1,7 +1,7 @@
-package com.amazontest.domain;
+package com.watchbaseballlive.domain;
 
 
-import com.amazontest.type.TeamName;
+import com.watchbaseballlive.type.TeamName;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
