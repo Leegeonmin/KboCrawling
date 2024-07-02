@@ -46,14 +46,16 @@ public class GameEntity {
     @CreatedDate
     private LocalDateTime createdDate;
 
-    public static GameEntity fromCrawling(LocalDateTime gameTime, Element team1,
-                                          Element team2, Element location){
-
+    public static GameEntity fromCrawling(LocalDateTime gameTime, Element awayteam,
+                                          Element hometeam, Element location){
+        TeamName homeTeam  = TeamName.fromKoreanName(hometeam.text());
+        TeamName awayTeam = TeamName.fromKoreanName(awayteam.text());
         return GameEntity.builder()
                 .gameTime(gameTime)
-                .homeTeam(TeamName.valueOf(team1.text().toUpperCase()))
-                .awayTeam(TeamName.valueOf(team2.text().toUpperCase()))
+                .homeTeam(homeTeam)
+                .awayTeam(awayTeam)
                 .location(location.text())
                 .build();
     }
+
 }

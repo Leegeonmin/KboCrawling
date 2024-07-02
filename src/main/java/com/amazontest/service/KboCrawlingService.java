@@ -36,17 +36,18 @@ public class KboCrawlingService {
     private final GameRepository gameRepository;
 
     @Transactional(readOnly = false)
-    public void parseToGames() {
+    public void saveGames() {
         WebDriver driver = null;
         try {
             driver = initializeWebDriver();
             navigateToPage(driver);
             for(String month : MONTHS){
                 selectYearAndMonth(driver, YEAR, month);
+                Document doc = Jsoup.parse(driver.getPageSource());
+                List<GameEntity> gameEntities = saveGames(doc);
+                gameRepository.saveAll(gameEntities);
             }
-            Document doc = Jsoup.parse(driver.getPageSource());
-            List<GameEntity> gameEntities = parseToGames(doc);
-            gameRepository.saveAll(gameEntities);
+
         } catch (Exception e) {
             System.err.println("Error occurred: " + e.getMessage());
         } finally {
@@ -77,7 +78,7 @@ public class KboCrawlingService {
         select.selectByValue(value);
     }
 
-    private List<GameEntity> parseToGames(Document doc) throws UnhandledAlertException {
+    private List<GameEntity> saveGames(Document doc) throws UnhandledAlertException {
         Element table = doc.select("table#" + TABLE_ID).first();
         if (table == null) {
             System.out.println("테이블을 찾을 수 없습니다.");
@@ -92,10 +93,13 @@ public class KboCrawlingService {
             for (Element row : rows) {
             Element day = row.selectFirst("td.day");
             Element time = row.selectFirst("td.time");
-            Element team1 = row.selectFirst("td.play > span");
-            Element vs = row.selectFirst("td.play > em"); // 이미 진행된 경기일경우 vs가 아니라 점수까지 표시됨(8vs5 em> span1 span2)
-            Element team2 = row.selectFirst("td.play > span:nth-child(3)");
+            Element awayTeam = row.selectFirst("td.play > span");
+//            Element vs = row.selectFirst("td.play > em"); // 이미 진행된 경기일경우 vs가 아니라 점수까지 표시됨(8vs5 em> span1 span2)
+            Element homeTeam = row.selectFirst("td.play > span:nth-child(3)");
             Element location = row.selectFirst("td:nth-child(8)");
+                if ("-".equals(location.text())) {
+                    location = row.selectFirst("td:nth-child(7)");
+                }
             if (day == null) {
                 day = Day;
             } else {
@@ -107,14 +111,14 @@ public class KboCrawlingService {
             LocalDateTime gameTime = createLocalDateTime(day,time);
 
             assert location != null;
-            assert team2 != null;
-            assert team1 != null;
-            games.add(GameEntity.fromCrawling(gameTime, team1, team2, location));
+            assert awayTeam != null;
+            assert homeTeam != null;
+            games.add(GameEntity.fromCrawling(gameTime, awayTeam, homeTeam, location));
 
         }
             return games;
     }
-    public LocalDateTime createLocalDateTime(Element day, Element time) {
+    private LocalDateTime createLocalDateTime(Element day, Element time) {
         String dayStr = day.text(); // "06.01(토)"
         String timeStr = time.text(); // "17:00"
 
