@@ -1,34 +1,52 @@
-package com.amazontest;
+package com.amazontest.service;
 
 import com.amazontest.domain.GameEntity;
+import com.amazontest.repository.GameRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
+import org.openqa.selenium.UnhandledAlertException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.Select;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
+
+@Service
+@Slf4j
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class KboCrawlingService {
     private static final String CHROME_DRIVER_PATH = "src/main/resources/static/driver/chromedriver.exe";
     private static final String URL = "https://www.koreabaseball.com/Schedule/Schedule.aspx";
     private static final String TABLE_ID = "tblScheduleList";
+    private static final String[] MONTHS = {"07", "08"};
+    private static final String YEAR = "2024";
+    private final GameRepository gameRepository;
 
-    public void saveGames() {
+    @Transactional(readOnly = false)
+    public void parseToGames() {
         WebDriver driver = null;
         try {
             driver = initializeWebDriver();
             navigateToPage(driver);
-            selectYearAndMonth(driver, "2024", "06");
+            for(String month : MONTHS){
+                selectYearAndMonth(driver, YEAR, month);
+            }
             Document doc = Jsoup.parse(driver.getPageSource());
-            processTable(doc);
+            List<GameEntity> gameEntities = parseToGames(doc);
+            gameRepository.saveAll(gameEntities);
         } catch (Exception e) {
             System.err.println("Error occurred: " + e.getMessage());
         } finally {
@@ -38,47 +56,38 @@ public class KboCrawlingService {
         }
     }
 
-    private static WebDriver initializeWebDriver() {
+    private WebDriver initializeWebDriver() {
         System.setProperty("webdriver.chrome.driver", CHROME_DRIVER_PATH);
         ChromeOptions options = new ChromeOptions();
         options.addArguments("headless", "--lang=ko_KR");
         return new ChromeDriver(options);
     }
 
-    private static void navigateToPage(WebDriver driver) {
+    private void navigateToPage(WebDriver driver) {
         driver.get(URL);
     }
 
-    private static void selectYearAndMonth(WebDriver driver, String year, String month) {
+    private void selectYearAndMonth(WebDriver driver, String year, String month) {
         selectOption(driver, "ddlYear", year);
         selectOption(driver, "ddlMonth", month);
     }
 
-    private static void selectOption(WebDriver driver, String selectId, String value) {
+    private void selectOption(WebDriver driver, String selectId, String value) {
         Select select = new Select(driver.findElement(By.id(selectId)));
         select.selectByValue(value);
     }
 
-    private static void processTable(Document doc) {
+    private List<GameEntity> parseToGames(Document doc) throws UnhandledAlertException {
         Element table = doc.select("table#" + TABLE_ID).first();
         if (table == null) {
             System.out.println("테이블을 찾을 수 없습니다.");
-            return;
         }
-
-        printTableHeaders(table);
-        printTableRows(table);
+        return GamesFromParsing(table);
     }
 
-    private static void printTableHeaders(Element table) {
-        List<String> headers = table.select("thead th").stream()
-                .map(Element::text)
-                .collect(Collectors.toList());
-        System.out.println(String.join("\t", headers));
-    }
-
-    private static void printTableRows(Element table) {
+    private List<GameEntity> GamesFromParsing(Element table) {
         Elements rows = table.select("tbody tr");
+        List<GameEntity> games = new ArrayList<>();
         Element Day = null;
             for (Element row : rows) {
             Element day = row.selectFirst("td.day");
@@ -100,11 +109,12 @@ public class KboCrawlingService {
             assert location != null;
             assert team2 != null;
             assert team1 != null;
-            GameEntity gameEntity = GameEntity.fromCrawling(gameTime, team1, team2, location);
+            games.add(GameEntity.fromCrawling(gameTime, team1, team2, location));
 
         }
+            return games;
     }
-    public static LocalDateTime createLocalDateTime(Element day, Element time) {
+    public LocalDateTime createLocalDateTime(Element day, Element time) {
         String dayStr = day.text(); // "06.01(토)"
         String timeStr = time.text(); // "17:00"
 

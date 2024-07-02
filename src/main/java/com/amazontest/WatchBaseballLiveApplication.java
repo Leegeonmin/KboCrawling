@@ -8,10 +8,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableScheduling
 @EnableJpaAuditing
-public class AmazonTestApplication {
+public class WatchBaseballLiveApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(AmazonTestApplication.class, args);
+        SpringApplication.run(WatchBaseballLiveApplication.class, args);
     }
 
 }
