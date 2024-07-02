@@ -1,7 +1,7 @@
 package com.amazontest.domain;
 
 
-import com.amazontest.type.TeamType;
+import com.amazontest.type.TeamName;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -32,11 +32,11 @@ public class GameEntity {
 
     @Enumerated(EnumType.STRING)
     @NotNull
-    private TeamType homeTeam;
+    private TeamName homeTeam;
 
     @Enumerated(EnumType.STRING)
     @NotNull
-    private TeamType awayTeam;
+    private TeamName awayTeam;
 
     @NotBlank
     private String location;
@@ -51,8 +51,8 @@ public class GameEntity {
 
         return GameEntity.builder()
                 .gameTime(gameTime)
-                .homeTeam(TeamType.valueOf(team1.text().toUpperCase()))
-                .awayTeam(TeamType.valueOf(team2.text().toUpperCase()))
+                .homeTeam(TeamName.valueOf(team1.text().toUpperCase()))
+                .awayTeam(TeamName.valueOf(team2.text().toUpperCase()))
                 .location(location.text())
                 .build();
     }
