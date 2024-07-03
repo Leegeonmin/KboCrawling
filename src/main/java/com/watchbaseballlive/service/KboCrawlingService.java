@@ -2,6 +2,7 @@ package com.watchbaseballlive.service;
 
 import com.watchbaseballlive.domain.GameEntity;
 import com.watchbaseballlive.repository.GameRepository;
+import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -28,7 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class KboCrawlingService {
-    private static final String CHROME_DRIVER_PATH = "src/main/resources/static/driver/chromedriver.exe";
+//    private static final String CHROME_DRIVER_PATH = "src/main/resources/static/driver/chromedriver.exe";
     private static final String URL = "https://www.koreabaseball.com/Schedule/Schedule.aspx";
     private static final String TABLE_ID = "tblScheduleList";
     private static final String[] MONTHS = {"07", "08"};
@@ -58,9 +59,11 @@ public class KboCrawlingService {
     }
 
     private WebDriver initializeWebDriver() {
-        System.setProperty("webdriver.chrome.driver", CHROME_DRIVER_PATH);
+//        System.setProperty("webdriver.chrome.driver", CHROME_DRIVER_PATH);
+        WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("headless", "--lang=ko_KR");
+        options.addArguments("headless", "--lang=ko_KR", "--no-sandbox", "--disable-dev-shm-usage");
+//        options.addArguments("headless", "--lang=ko_KR");
         return new ChromeDriver(options);
     }
 
