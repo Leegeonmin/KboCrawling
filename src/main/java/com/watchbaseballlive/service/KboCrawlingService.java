@@ -60,7 +60,7 @@ public class KboCrawlingService {
 
     private WebDriver initializeWebDriver() {
 //        System.setProperty("webdriver.chrome.driver", CHROME_DRIVER_PATH);
-        WebDriverManager.chromedriver().setup();
+        WebDriverManager.chromedriver().browserVersion("126.0.6478.126").setup();
         ChromeOptions options = new ChromeOptions();
         options.addArguments("headless", "--lang=ko_KR", "--no-sandbox", "--disable-dev-shm-usage");
 //        options.addArguments("headless", "--lang=ko_KR");
