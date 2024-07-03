@@ -20,4 +20,10 @@ public class TestController {
         kboCrawlingService.saveGames();
         return  ResponseEntity.ok().body("kbo 경기 일정 업로드 성공");
     }
+
+
+    @GetMapping("/msg")
+    public ResponseEntity<String> test(){
+        return  ResponseEntity.ok().body("테스트");
+    }
 }
