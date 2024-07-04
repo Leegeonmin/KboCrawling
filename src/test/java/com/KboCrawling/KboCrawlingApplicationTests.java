@@ -1,10 +1,10 @@
-package com.watchbaseballlive;
+package com.KboCrawling;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class WatchBaseballLiveApplicationTests {
+class KboCrawlingApplicationTests {
 
     @Test
     void contextLoads() {

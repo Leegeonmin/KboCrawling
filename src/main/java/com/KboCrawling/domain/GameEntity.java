@@ -1,7 +1,7 @@
-package com.watchbaseballlive.domain;
+package com.KboCrawling.domain;
 
 
-import com.watchbaseballlive.type.TeamName;
+import com.KboCrawling.type.TeamName;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -28,6 +28,7 @@ public class GameEntity {
     @GeneratedValue
     private long id;
 
+    @NotNull
     private LocalDateTime gameTime;
 
     @Enumerated(EnumType.STRING)
@@ -39,6 +40,7 @@ public class GameEntity {
     private TeamName awayTeam;
 
     @NotBlank
+    @Column(length = 20)
     private String location;
 
     @LastModifiedDate

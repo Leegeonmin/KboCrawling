@@ -1,7 +1,7 @@
-package com.watchbaseballlive.service;
+package com.KboCrawling.service;
 
-import com.watchbaseballlive.domain.GameEntity;
-import com.watchbaseballlive.repository.GameRepository;
+import com.KboCrawling.domain.GameEntity;
+import com.KboCrawling.repository.GameRepository;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class KboCrawlingService {
-//    private static final String CHROME_DRIVER_PATH = "src/main/resources/static/driver/chromedriver.exe";
     private static final String URL = "https://www.koreabaseball.com/Schedule/Schedule.aspx";
     private static final String TABLE_ID = "tblScheduleList";
     private static final String[] MONTHS = {"07", "08"};
@@ -50,7 +49,7 @@ public class KboCrawlingService {
             }
 
         } catch (Exception e) {
-            System.err.println("Error occurred: " + e.getMessage());
+            System.err.println("save game Error occurred: " + e.getMessage());
         } finally {
             if (driver != null) {
                 driver.quit();

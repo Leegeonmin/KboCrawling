@@ -1,4 +1,4 @@
-package com.watchbaseballlive;
+package com.KboCrawling;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,10 +8,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableScheduling
 @EnableJpaAuditing
-public class WatchBaseballLiveApplication {
+public class KboCrawlingApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(WatchBaseballLiveApplication.class, args);
+        SpringApplication.run(KboCrawlingApplication.class, args);
     }
 
 }

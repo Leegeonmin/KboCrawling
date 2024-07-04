@@ -1,4 +1,4 @@
-package com.watchbaseballlive.type;
+package com.KboCrawling.type;
 
 public enum TeamName {
     LOTTE("롯데", "Lotte Giants"),

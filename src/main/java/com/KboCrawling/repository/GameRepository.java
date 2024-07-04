@@ -1,6 +1,6 @@
-package com.watchbaseballlive.repository;
+package com.KboCrawling.repository;
 
-import com.watchbaseballlive.domain.GameEntity;
+import com.KboCrawling.domain.GameEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
