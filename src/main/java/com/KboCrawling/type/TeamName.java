@@ -23,9 +23,6 @@ public enum TeamName {
         return koreanName;
     }
 
-    public String getEnglishName() {
-        return englishName;
-    }
     public static TeamName fromKoreanName(String koreanName) {
         for (TeamName team : TeamName.values()) {
             if (team.getKoreanName().equals(koreanName)) {
