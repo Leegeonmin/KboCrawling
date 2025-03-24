@@ -31,8 +31,8 @@ import java.util.List;
 public class KboCrawlingService {
     private static final String URL = "https://www.koreabaseball.com/Schedule/Schedule.aspx";
     private static final String TABLE_ID = "tblScheduleList";
-    private static final String[] MONTHS = {"07", "08"};
-    private static final String YEAR = "2024";
+    private static final String[] MONTHS = {"03", "04", "05", "06", "07", "08", "09", "10", "11", "12"};
+    private static final String YEAR = "2025";
     private final GameRepository gameRepository;
 
     @Transactional(readOnly = false)
