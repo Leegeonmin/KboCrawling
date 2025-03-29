@@ -38,3 +38,6 @@ out/
 
 application-dev.yml
 application.yml
+chromedriver.exe
+
+data.sql
