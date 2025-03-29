@@ -16,11 +16,11 @@ import java.util.stream.Collectors;
 public class GameService {
     private final GameRepository gameRepository;
 
-    public List<GameListByTeamNameDto> getGamesByTeamName(String teamName) {
-        TeamName team = TeamName.fromKoreanName(teamName);
-        List<GameEntity> games = gameRepository.
-                findByHomeTeamOrAwayTeam(team, team);
-
-        return games.stream().map(GameListByTeamNameDto::new).collect(Collectors.toList());
-    }
+//    public List<GameListByTeamNameDto> getGamesByTeamName(String teamName) {
+//        TeamName team = TeamName.fromKoreanName(teamName);
+//        List<GameEntity> games = gameRepository.
+//                findByHomeTeamOrAwayTeam(team, team);
+//
+//        return games.stream().map(GameListByTeamNameDto::new).collect(Collectors.toList());
+//    }
 }

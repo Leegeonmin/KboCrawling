@@ -9,6 +9,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity(name = "team")
 @NoArgsConstructor
@@ -29,6 +30,9 @@ public class TeamEntity {
     @NotBlank
     @Column(length = 20)
     private String name;
+
+    @OneToMany(mappedBy = "team")
+    private List<GameTeam> gameTeams;
 
     @LastModifiedDate
     private LocalDateTime updatedDate;

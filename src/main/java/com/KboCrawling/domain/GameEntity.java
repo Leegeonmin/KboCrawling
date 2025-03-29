@@ -12,6 +12,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity(name = "game")
 @NoArgsConstructor
@@ -28,13 +29,8 @@ public class GameEntity {
     @NotNull
     private LocalDateTime gameTime;
 
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    private TeamName homeTeam;
-
-    @Enumerated(EnumType.STRING)
-    @NotNull
-    private TeamName awayTeam;
+    @OneToMany(mappedBy = "game")
+    private List<GameTeam> gameTeams;
 
     @NotBlank
     @Column(length = 20)
@@ -51,8 +47,8 @@ public class GameEntity {
         TeamName awayTeam = TeamName.fromKoreanName(awayteam.text());
         return GameEntity.builder()
                 .gameTime(gameTime)
-                .homeTeam(homeTeam)
-                .awayTeam(awayTeam)
+//                .homeTeam(homeTeam)
+//                .awayTeam(awayTeam)
                 .location(location.text())
                 .build();
     }

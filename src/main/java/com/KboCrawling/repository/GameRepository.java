@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface GameRepository extends JpaRepository<GameEntity, Long> {
-    List<GameEntity> findByHomeTeamOrAwayTeam(TeamName homeTeam,TeamName awayTeam);
+//    List<GameEntity> findbyGa(TeamName homeTeam,TeamName awayTeam);
 }

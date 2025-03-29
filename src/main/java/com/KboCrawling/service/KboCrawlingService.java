@@ -1,7 +1,11 @@
 package com.KboCrawling.service;
 
 import com.KboCrawling.domain.GameEntity;
+import com.KboCrawling.domain.GameTeam;
+import com.KboCrawling.domain.TeamEntity;
 import com.KboCrawling.repository.GameRepository;
+import com.KboCrawling.repository.GameTeamRepository;
+import com.KboCrawling.repository.TeamRepository;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +26,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -34,6 +39,8 @@ public class KboCrawlingService {
     private static final String[] MONTHS = {"03", "04", "05", "06", "07", "08", "09", "10", "11", "12"};
     private static final String YEAR = "2025";
     private final GameRepository gameRepository;
+    private final TeamRepository teamRepository;
+    private final GameTeamRepository gameTeamRepository;
 
     @Transactional(readOnly = false)
     public void saveGames() {
@@ -44,8 +51,8 @@ public class KboCrawlingService {
             for(String month : MONTHS){
                 selectYearAndMonth(driver, YEAR, month);
                 Document doc = Jsoup.parse(driver.getPageSource());
-                List<GameEntity> gameEntities = saveGames(doc);
-                gameRepository.saveAll(gameEntities);
+                saveGamesFromDocument(doc);
+
             }
 
         } catch (Exception e) {
@@ -80,28 +87,26 @@ public class KboCrawlingService {
         select.selectByValue(value);
     }
 
-    private List<GameEntity> saveGames(Document doc) throws UnhandledAlertException {
+    @Transactional
+    protected void saveGamesFromDocument(Document doc) {
         Element table = doc.select("table#" + TABLE_ID).first();
         if (table == null) {
             System.out.println("테이블을 찾을 수 없습니다.");
         }
-        return GamesFromParsing(table);
-    }
 
-    private List<GameEntity> GamesFromParsing(Element table) {
         Elements rows = table.select("tbody tr");
-        List<GameEntity> games = new ArrayList<>();
         Element Day = null;
-            for (Element row : rows) {
+
+        for (Element row : rows) {
             Element day = row.selectFirst("td.day");
             Element time = row.selectFirst("td.time");
-            Element awayTeam = row.selectFirst("td.play > span");
+            Element awayTeamElement = row.selectFirst("td.play > span");
 //            Element vs = row.selectFirst("td.play > em"); // 이미 진행된 경기일경우 vs가 아니라 점수까지 표시됨(8vs5 em> span1 span2)
-            Element homeTeam = row.selectFirst("td.play > span:nth-child(3)");
+            Element homeTeamElement = row.selectFirst("td.play > span:nth-child(3)");
             Element location = row.selectFirst("td:nth-child(8)");
-                if ("-".equals(location.text())) {
-                    location = row.selectFirst("td:nth-child(7)");
-                }
+            if ("-".equals(location.text())) {
+                location = row.selectFirst("td:nth-child(7)");
+            }
             if (day == null) {
                 day = Day;
             } else {
@@ -110,15 +115,22 @@ public class KboCrawlingService {
             if (time == null) {
                 break;
             }
-            LocalDateTime gameTime = createLocalDateTime(day,time);
+            LocalDateTime gameTime = createLocalDateTime(day, time);
+            String a  = String.valueOf(teamRepository.findByName(awayTeamElement.text()));
+            TeamEntity awayTeam = teamRepository.findByName(awayTeamElement.text());
+            TeamEntity homeTeam = teamRepository.findByName(homeTeamElement.text());
 
-            assert location != null;
-            assert awayTeam != null;
-            assert homeTeam != null;
-            games.add(GameEntity.fromCrawling(gameTime, awayTeam, homeTeam, location));
+            GameEntity game = GameEntity.builder()
+                    .gameTime(gameTime)
+                    .location(location.text())
+                    .build();
+            gameRepository.save(game);
+
+            gameTeamRepository.save(GameTeam.builder().game(game).team(homeTeam).isHomeGame(true).build());
+            gameTeamRepository.save(GameTeam.builder().game(game).team(awayTeam).isHomeGame(false).build());
+
 
         }
-            return games;
     }
     private LocalDateTime createLocalDateTime(Element day, Element time) {
         String dayStr = day.text(); // "06.01(토)"
